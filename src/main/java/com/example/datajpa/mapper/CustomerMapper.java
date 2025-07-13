@@ -25,5 +25,4 @@ public interface CustomerMapper {
 
     CustomerResponse mapCustomerToCustomerResponse(Customer customer);
     Customer fromCreateCustomerRequest(CustomerRequest customerRequest);
-
 }

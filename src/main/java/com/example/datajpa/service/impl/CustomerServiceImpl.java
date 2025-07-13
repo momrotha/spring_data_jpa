@@ -46,26 +46,26 @@ public class CustomerServiceImpl implements CustomerService {
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Phone number not found"));
     }
 
-//    CustomerResponseDetail
-@Override
-public CustomerResponseDetail findCustomerWithAccountsByPhoneNumber(String phoneNumber) {
-    Customer customer = customerRepository.findByPhoneNumber(phoneNumber)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
+    //    CustomerResponseDetail
+    @Override
+    public CustomerResponseDetail findCustomerWithAccountsByPhoneNumber(String phoneNumber) {
+        Customer customer = customerRepository.findByPhoneNumber(phoneNumber)
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
 
-    List<Account> accounts = accountRepository.findByCustomer(customer);
+        List<Account> accounts = accountRepository.findByCustomer(customer);
 
-    List<CustomerResponseDetail.AccountInfo> accountInfos = accounts.stream()
-            .map(account -> new CustomerResponseDetail.AccountInfo(account.getActNo()))
-            .toList();
+        List<CustomerResponseDetail.AccountInfo> accountInfos = accounts.stream()
+                .map(account -> new CustomerResponseDetail.AccountInfo(account.getActNo()))
+                .toList();
 
-    return new CustomerResponseDetail(
-            customer.getFullName(),
-            customer.getGender(),
-            accountInfos
-    );
-}
+        return new CustomerResponseDetail(
+                customer.getFullName(),
+                customer.getGender(),
+                accountInfos
+        );
+    }
 
-//    findaccountbyid
+    //    findaccountbyid
     @Override
     public List<AccountResponse> findAccountsByCustomerId(Integer customerId) {
         Customer customer = customerRepository.findById(customerId)

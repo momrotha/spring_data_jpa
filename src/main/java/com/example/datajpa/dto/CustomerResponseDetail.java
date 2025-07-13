@@ -9,3 +9,4 @@ public record CustomerResponseDetail(
 ) {
     public record AccountInfo(String actNo) {}
 }
+

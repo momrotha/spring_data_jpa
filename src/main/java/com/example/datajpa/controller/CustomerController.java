@@ -21,7 +21,7 @@ public class CustomerController {
     public CustomerResponse updateCustomer(@PathVariable String phoneNumber, @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         return customerService.updateByPhoneNumber(phoneNumber, updateCustomerRequest);
     }
-    @GetMapping("/{phoneNumber}")
+    @GetMapping("/phone/{phoneNumber}")
     public CustomerResponse getCustomerByPhoneNumber(
             @PathVariable String phoneNumber){
         return customerService.findByPhoneNumber(phoneNumber);
@@ -38,8 +38,8 @@ public class CustomerController {
         return customerService.findCustomerWithAccountsByPhoneNumber(phoneNumber);
     }
 
-//    findaccountbycustomerID
-    @GetMapping("/{customerId}")
+    //    findaccountbycustomerID
+    @GetMapping("/id/{customerId}/accounts")
     public List<AccountResponse> getAccountsByCustomerId(@PathVariable Integer customerId) {
         return customerService.findAccountsByCustomerId(customerId);
     }
