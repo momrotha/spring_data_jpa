@@ -12,6 +12,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.List;
+
 @Service
 @Transactional
 @RequiredArgsConstructor
@@ -21,6 +23,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public AccountResponse createAccount(AccountRequest accountRequest) {
+        if (accountRepository.existsByActNo(accountRequest.actNo())) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account already exists with actNo: " + accountRequest.actNo());
+        }
         Account account = accountMapper.toEntity(accountRequest);
         account.setIsDeleted(false);
 
@@ -42,11 +47,10 @@ public class AccountServiceImpl implements AccountService {
                 .map(accountMapper::mapaccounttoResponse)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
     }
-
     @Override
     public AccountResponse[] findByCustomer(Integer customerId) {
-        return accountRepository.findAll().stream()
-                .filter(account -> account.getCustomer().getId().equals(customerId))
+        List<Account> accounts = accountRepository.findByCustomerId(customerId);
+        return accounts.stream()
                 .map(accountMapper::mapaccounttoResponse)
                 .toArray(AccountResponse[]::new);
     }
@@ -72,9 +76,13 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountRepository.findByActNo(actNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
 
-        account.setIsDeleted(true);
+        if (account.getIsDeleted()) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Account already disabled");
+        }
 
+        account.setIsDeleted(true);
         Account savedAccount = accountRepository.save(account);
         return accountMapper.mapaccounttoResponse(savedAccount);
     }
+
 }

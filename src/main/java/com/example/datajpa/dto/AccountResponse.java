@@ -7,7 +7,8 @@ import java.math.BigDecimal;
 public record AccountResponse(
         String actNo,
         BigDecimal balance,
-        BigDecimal overLimit
+        BigDecimal overLimit,
+        Boolean isDeleted
 
 ) {
 }

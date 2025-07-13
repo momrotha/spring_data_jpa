@@ -29,6 +29,11 @@ public class AccountController {
         return accountService.findByActNo(actNo);
     }
 
+    @GetMapping("/customer/{customerId}/accounts")
+    public AccountResponse[] getAccountsByCustomer(@PathVariable Integer customerId) {
+        return accountService.findByCustomer(customerId);
+    }
+
 
     @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{actNo}")

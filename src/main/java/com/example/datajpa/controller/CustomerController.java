@@ -1,10 +1,8 @@
 package com.example.datajpa.controller;
 
 import com.example.datajpa.domain.Customer;
-import com.example.datajpa.dto.AccountResponse;
-import com.example.datajpa.dto.CustomerRequest;
-import com.example.datajpa.dto.CustomerResponse;
-import com.example.datajpa.dto.UpdateCustomerRequest;
+import com.example.datajpa.dto.*;
+import com.example.datajpa.service.AccountService;
 import com.example.datajpa.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -18,6 +16,7 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+    private final AccountService accountService;
 
     @PatchMapping("/{phoneNumber}")
     public CustomerResponse updateCustomer(@PathVariable String phoneNumber, @RequestBody UpdateCustomerRequest updateCustomerRequest) {
@@ -30,17 +29,29 @@ public class CustomerController {
     }
 
 
-//    @GetMapping("/customer/{customerId}")
-//    public AccountResponse[] getByCustomer(@PathVariable Integer customerId) {
-//        return customerService.findByCustomer(customerId);
-//    }
-
-
-    @GetMapping("/{phoneNumber}/accounts")
-    public CustomerResponse findAccountByCustomer(
-            @PathVariable String phoneNumber){
-        return customerService.findByPhoneNumber(phoneNumber);
+    @GetMapping("/accounts/{actNo}")
+    public AccountResponse getAccountByActNo(@PathVariable String actNo) {
+        return accountService.findByActNo(actNo);
     }
+
+    @GetMapping("/{phoneNumber}/details")
+    public CustomerResponseDetail getCustomerWithAccounts(@PathVariable String phoneNumber) {
+        return customerService.findCustomerWithAccountsByPhoneNumber(phoneNumber);
+    }
+
+    @GetMapping("/customer/{customerId}")
+    public List<AccountResponse> getAccountsByCustomerId(@PathVariable Integer customerId) {
+        return customerService.findAccountsByCustomerId(customerId);
+    }
+
+    @GetMapping("/{phoneNumber}/{actNo}")
+    public AccountResponse getAccountByPhoneNumberAndActNo(
+            @PathVariable String phoneNumber,
+            @PathVariable String actNo
+    ) {
+        return customerService.findAccountByPhoneNumberAndActNo(phoneNumber, actNo);
+    }
+
 
     @GetMapping
     public List<CustomerResponse> findAll() {

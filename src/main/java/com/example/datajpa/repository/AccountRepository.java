@@ -10,12 +10,13 @@ import java.util.Optional;
 
 public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByActNo(String actNo);
-    Optional<Account> findFirstByCustomer(Customer customer);
+//    Optional<Account> findFirstByCustomer(Customer customer);
     List<Account> findByCustomerId(Integer customerId);
-
-
-    boolean existsByActNo(String actNo);
-
     List<Account> findByCustomer(Customer customer);
+    boolean existsByActNo(String actNo);
+    Optional<Account> findByActNoAndCustomer(String actNo, Customer customer);
+
+
+
 
 }
