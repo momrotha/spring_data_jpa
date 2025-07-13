@@ -1,6 +1,7 @@
 package com.example.datajpa.controller;
 
 import com.example.datajpa.domain.Customer;
+import com.example.datajpa.dto.AccountResponse;
 import com.example.datajpa.dto.CustomerRequest;
 import com.example.datajpa.dto.CustomerResponse;
 import com.example.datajpa.dto.UpdateCustomerRequest;
@@ -17,12 +18,26 @@ import java.util.List;
 public class CustomerController {
 
     private final CustomerService customerService;
+
     @PatchMapping("/{phoneNumber}")
     public CustomerResponse updateCustomer(@PathVariable String phoneNumber, @RequestBody UpdateCustomerRequest updateCustomerRequest) {
         return customerService.updateByPhoneNumber(phoneNumber, updateCustomerRequest);
     }
     @GetMapping("/{phoneNumber}")
     public CustomerResponse getCustomerByPhoneNumber(
+            @PathVariable String phoneNumber){
+        return customerService.findByPhoneNumber(phoneNumber);
+    }
+
+
+//    @GetMapping("/customer/{customerId}")
+//    public AccountResponse[] getByCustomer(@PathVariable Integer customerId) {
+//        return customerService.findByCustomer(customerId);
+//    }
+
+
+    @GetMapping("/{phoneNumber}/accounts")
+    public CustomerResponse findAccountByCustomer(
             @PathVariable String phoneNumber){
         return customerService.findByPhoneNumber(phoneNumber);
     }
