@@ -1,6 +1,5 @@
 package com.example.datajpa.controller;
 
-import com.example.datajpa.domain.Customer;
 import com.example.datajpa.dto.*;
 import com.example.datajpa.service.AccountService;
 import com.example.datajpa.service.CustomerService;
@@ -39,7 +38,8 @@ public class CustomerController {
         return customerService.findCustomerWithAccountsByPhoneNumber(phoneNumber);
     }
 
-    @GetMapping("/customer/{customerId}")
+//    findaccountbycustomerID
+    @GetMapping("/{customerId}")
     public List<AccountResponse> getAccountsByCustomerId(@PathVariable Integer customerId) {
         return customerService.findAccountsByCustomerId(customerId);
     }
