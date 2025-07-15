@@ -20,6 +20,7 @@ public class TransactionType {
     @Column(nullable = false, unique = true, length = 30)
     private String typeName;
 
+    private boolean is_deleted;
     @OneToMany(mappedBy = "transactionType")
     private List<Transaction> transactions;
 }

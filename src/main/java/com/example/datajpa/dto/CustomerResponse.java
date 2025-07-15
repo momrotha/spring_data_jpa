@@ -8,6 +8,7 @@ public record CustomerResponse(
         String fullName,
         String gender,
         String phoneNumber,
+        String nationalCardId,
         String email
 ) {
 }

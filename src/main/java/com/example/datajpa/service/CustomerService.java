@@ -1,5 +1,7 @@
 package com.example.datajpa.service;
 
+import com.example.datajpa.domain.Account;
+import com.example.datajpa.domain.Customer;
 import com.example.datajpa.dto.*;
 
 import java.util.List;
@@ -14,5 +16,9 @@ public interface CustomerService {
     CustomerResponseDetail findCustomerWithAccountsByPhoneNumber(String phoneNumber);
     List<CustomerResponse> findAll();
     CustomerResponse createNew(CustomerRequest createcustomerRequest);
-
+    void disableByPhoneNumber(String phoneNumber);
+//    Account createAccount(Integer customerId, AccountRequest accountRequest);
 }
+
+
+

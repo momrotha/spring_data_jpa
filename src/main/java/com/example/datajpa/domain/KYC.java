@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @Entity
+
 public class KYC {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)

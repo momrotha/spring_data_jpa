@@ -2,11 +2,15 @@ package com.example.datajpa.service.impl;
 
 import com.example.datajpa.domain.Account;
 import com.example.datajpa.domain.Customer;
+import com.example.datajpa.domain.CustomerSegment;
+import com.example.datajpa.domain.KYC;
 import com.example.datajpa.dto.*;
 import com.example.datajpa.mapper.AccountMapper;
 import com.example.datajpa.mapper.CustomerMapper;
 import com.example.datajpa.repository.AccountRepository;
 import com.example.datajpa.repository.CustomerRepository;
+import com.example.datajpa.repository.CustomerSegmentRepository;
+import com.example.datajpa.repository.KYCRepository;
 import com.example.datajpa.service.CustomerService;
 
 import lombok.RequiredArgsConstructor;
@@ -14,24 +18,30 @@ import lombok.extern.slf4j.Slf4j;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.security.Key;
 import java.util.List;
 
 @Slf4j
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class CustomerServiceImpl implements CustomerService {
 
     private final CustomerRepository customerRepository;
     private final CustomerMapper customerMapper;
     private  final AccountRepository accountRepository;
     private final AccountMapper accountMapper;
+    private final KYCRepository kycRepository;
+    private final CustomerMapper mapper;
+    private final CustomerSegmentRepository customerSegmentRepository;
 
     @Override
     public CustomerResponse updateByPhoneNumber(String phoneNumber, UpdateCustomerRequest updateCustomerRequest) {
         Customer customer = customerRepository
-                .findByPhoneNumber(phoneNumber)
+                .findCustomerByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer phone number not found"));
         customerMapper.mapCustomertoCustomerPartially(updateCustomerRequest, customer);
         customer = customerRepository.save(customer);
@@ -41,7 +51,7 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public CustomerResponse findByPhoneNumber(String phoneNumber) {
         return customerRepository
-                .findByPhoneNumber(phoneNumber)
+                .findCustomerByPhoneNumber(phoneNumber)
                 .map(customerMapper::mapCustomerToCustomerResponse)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Phone number not found"));
     }
@@ -49,7 +59,7 @@ public class CustomerServiceImpl implements CustomerService {
     //    CustomerResponseDetail
     @Override
     public CustomerResponseDetail findCustomerWithAccountsByPhoneNumber(String phoneNumber) {
-        Customer customer = customerRepository.findByPhoneNumber(phoneNumber)
+        Customer customer = customerRepository.findCustomerByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
 
         List<Account> accounts = accountRepository.findByCustomer(customer);
@@ -89,28 +99,58 @@ public class CustomerServiceImpl implements CustomerService {
     }
 
     @Override
-    public CustomerResponse createNew(CustomerRequest createCustomerRequest) {
-        if (customerRepository.existsByEmail(createCustomerRequest.email()))
+    public CustomerResponse createNew(CustomerRequest customerRequest) {
+
+
+        if (customerRepository.existsByEmail(customerRequest.email())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Email already exists");
+        }
 
-        if (customerRepository.existsByPhoneNumber(createCustomerRequest.phoneNumber()))
+        if (customerRepository.existsByPhoneNumber(customerRequest.phoneNumber())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Phone number already exists");
+        }
 
-        Customer customer = customerMapper.fromCreateCustomerRequest(createCustomerRequest);
+        CustomerSegment customerSegment = customerSegmentRepository
+                .getCustomerSegmentBySegment(customerRequest.segment())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Segment not found"));
+
+        Customer customer = customerMapper.fromCreateCustomerRequest(customerRequest);
         customer.setIsDeleted(false);
+        customer.setCustomerSegment(customerSegment);
 
-        log.info("Customer ID before save: {}", customer.getId());
         customer = customerRepository.save(customer);
-        log.info("Customer ID after save: {}", customer.getId());
+        customerRepository.flush();
+
+        if (!kycRepository.existsByNationalCardId(customerRequest.nationalCardId())) {
+            KYC kyc = new KYC();
+            kyc.setNationalCardId(customerRequest.nationalCardId());
+            kyc.setIsVerified(false);
+            kyc.setIsDeleted(false);
+            kyc.setCustomer(customer);
+
+            kycRepository.save(kyc);
+
+            // Return mapped response DTO
+            return mapper.mapCustomerToCustomerResponse(customer);
+
+        } else {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "National card already exists");
+        }
+    }
 
 
-        return customerMapper.mapCustomerToCustomerResponse(customer);
+    @Override
+    public void disableByPhoneNumber(String phoneNumber) {
+        if (!customerRepository.existsByPhoneNumber(phoneNumber)){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer phone number not found");
+        }
+        customerRepository.disableByPhoneNumber(phoneNumber);
     }
 
 
     @Override
     public AccountResponse findAccountByPhoneNumberAndActNo(String phoneNumber, String actNo) {
-        Customer customer = customerRepository.findByPhoneNumber(phoneNumber)
+        Customer customer = customerRepository.findCustomerByPhoneNumber(phoneNumber)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Customer not found"));
 
         Account account = accountRepository.findByActNoAndCustomer(actNo, customer)

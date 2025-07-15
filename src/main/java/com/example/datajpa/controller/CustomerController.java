@@ -5,6 +5,7 @@ import com.example.datajpa.service.AccountService;
 import com.example.datajpa.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -63,4 +64,20 @@ public class CustomerController {
     public CustomerResponse createNew(@RequestBody CustomerRequest customerRequest) {
         return customerService.createNew(customerRequest);
     }
+
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    @PutMapping("/disable/{phoneNumber}")
+    public CustomerResponse disableAccountByPhoneNumber(@PathVariable String phoneNumber) {
+        customerService.disableByPhoneNumber(phoneNumber);
+        return customerService.findByPhoneNumber(phoneNumber);
+    }
+
+//    add more for verify
+    @PutMapping("/verify/{customerId}")
+    public String verifyKyc(@PathVariable Integer customerId) {
+        System.out.println("Verify KYC for customer ID: " + customerId);
+        return "KYC verified successfully.";
+    }
+
+
 }

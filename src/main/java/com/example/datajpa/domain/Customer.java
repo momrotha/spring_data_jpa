@@ -32,6 +32,9 @@ public class Customer {
 //    customer has much accounts  use has -a (use object)
     private List<Account> accounts;
 
-    @OneToOne(mappedBy = "customer")
+    @OneToOne(mappedBy = "customer", optional = false)
     private KYC kyc;
+
+    @ManyToOne
+    private CustomerSegment customerSegment;
 }

@@ -23,6 +23,7 @@ public interface CustomerMapper {
 //    What is source data? (parameter) (customer)
 //    What is target data? (return_type) (response)
 
+
     CustomerResponse mapCustomerToCustomerResponse(Customer customer);
     Customer fromCreateCustomerRequest(CustomerRequest customerRequest);
 }

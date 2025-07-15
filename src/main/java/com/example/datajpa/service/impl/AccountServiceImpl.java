@@ -63,11 +63,11 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public AccountResponse updateAccount(String actNo, AccountRequest dto) {
+    public AccountResponse updateAccount(String actNo, AccountRequest accountRequest) {
         Account account = accountRepository.findByActNo(actNo)
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Account not found"));
-        account.setBalance(dto.balance());
-        account.setOverLimit(dto.overLimit());
+        account.setBalance(accountRequest.balance());
+        account.setOverLimit(accountRequest.overLimit());
         return accountMapper.mapaccounttoResponse(accountRepository.save(account));
     }
 
