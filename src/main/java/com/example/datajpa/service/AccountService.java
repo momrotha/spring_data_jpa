@@ -6,7 +6,7 @@ import com.example.datajpa.dto.AccountResponse;
 
 public interface AccountService {
 
-    AccountResponse createAccount(AccountRequest accountRequest);
+    AccountResponse createNew(AccountRequest accountRequest);
     AccountResponse[] findAll();
     AccountResponse findByActNo(String actNo);
     AccountResponse[] findByCustomer(Integer customerId);

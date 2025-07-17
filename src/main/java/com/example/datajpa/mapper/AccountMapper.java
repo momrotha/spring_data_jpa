@@ -8,8 +8,9 @@ import org.mapstruct.Mapping;
 
 @Mapper(componentModel = "spring")
 public interface AccountMapper {
-    Account toEntity(AccountRequest accountRequest);
 
-    @Mapping(source = "isDeleted", target = "isDeleted")
+
+    @Mapping(source = "accountType.type", target = "accountType")
     AccountResponse mapaccounttoResponse(Account account);
+
 }

@@ -2,6 +2,7 @@ package com.example.datajpa.repository;
 
 
 import com.example.datajpa.domain.Account;
+import com.example.datajpa.domain.AccountType;
 import com.example.datajpa.domain.Customer;
 import org.springframework.data.jpa.repository.JpaRepository;
 
@@ -17,5 +18,5 @@ public interface AccountRepository extends JpaRepository<Account, Integer> {
     Optional<Account> findByActNoAndCustomer(String actNo, Customer customer);
 
 
-
+    AccountType findByAccountType(AccountType accountType);
 }

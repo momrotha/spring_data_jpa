@@ -15,8 +15,8 @@ public class AccountController {
 
     @ResponseStatus(HttpStatus.CREATED)
     @PostMapping
-    public AccountResponse createAccount(@RequestBody AccountRequest accountRequest) {
-        return accountService.createAccount(accountRequest);
+    public AccountResponse createNew(@RequestBody AccountRequest accountRequest) {
+        return accountService.createNew(accountRequest);
     }
 
     @GetMapping

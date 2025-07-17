@@ -6,9 +6,10 @@ import java.math.BigDecimal;
 @Builder
 public record AccountResponse(
         String actNo,
+        String actName,
+        String actCurrency,
         BigDecimal balance,
-        BigDecimal overLimit,
-        Boolean isDeleted
+        Boolean isHide,
+        String accountType
+) {}
 
-) {
-}

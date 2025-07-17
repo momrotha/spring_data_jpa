@@ -5,10 +5,7 @@ import com.example.datajpa.domain.Customer;
 import com.example.datajpa.dto.CustomerRequest;
 import com.example.datajpa.dto.CustomerResponse;
 import com.example.datajpa.dto.UpdateCustomerRequest;
-import org.mapstruct.BeanMapping;
-import org.mapstruct.Mapper;
-import org.mapstruct.MappingTarget;
-import org.mapstruct.NullValuePropertyMappingStrategy;
+import org.mapstruct.*;
 
 @Mapper(componentModel = "spring")
 public interface CustomerMapper {
@@ -23,7 +20,8 @@ public interface CustomerMapper {
 //    What is source data? (parameter) (customer)
 //    What is target data? (return_type) (response)
 
-
     CustomerResponse mapCustomerToCustomerResponse(Customer customer);
+
+    @Mapping(target = "customerSegment", ignore = true)
     Customer fromCreateCustomerRequest(CustomerRequest customerRequest);
 }

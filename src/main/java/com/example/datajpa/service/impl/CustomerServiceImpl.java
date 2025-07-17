@@ -111,7 +111,7 @@ public class CustomerServiceImpl implements CustomerService {
         }
 
         CustomerSegment customerSegment = customerSegmentRepository
-                .getCustomerSegmentBySegment(customerRequest.segment())
+                .getCustomerSegmentBySegment(customerRequest.customerSegment())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Segment not found"));
 
         Customer customer = customerMapper.fromCreateCustomerRequest(customerRequest);
