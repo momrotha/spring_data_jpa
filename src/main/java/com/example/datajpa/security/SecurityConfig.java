@@ -67,7 +67,7 @@ public class SecurityConfig {
 
 
 
-//        all request must be authenticated
+//        all requests must be authenticated
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(HttpMethod.POST, "/api/v1/customers/**")
                     .hasAnyRole("ADMIN", "STAFF")
