@@ -37,6 +37,7 @@ public class SecurityInitialize {
             roleCustomer.setName("CUSTOMER");
 
             roleRepository.saveAll(List.of(roleUser, roleAdmin, roleStaff, roleCustomer));
+            roleRepository.flush();
 
 
             User admin = new User();
