@@ -66,7 +66,7 @@ public class SecurityConfig {
     public SecurityFilterChain apiSecurity(HttpSecurity http) throws Exception {
 
 
-//        Todo
+
 //        all request must be authenticated
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers(HttpMethod.POST, "/api/v1/customers/**")
