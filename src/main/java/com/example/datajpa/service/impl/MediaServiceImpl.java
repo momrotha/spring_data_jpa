@@ -1,6 +1,5 @@
 package com.example.datajpa.service.impl;
 
-
 import com.example.datajpa.domain.Media;
 import com.example.datajpa.dto.MediaResponse;
 import com.example.datajpa.repository.MediaRepository;
@@ -8,22 +7,27 @@ import com.example.datajpa.service.MediaService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.FileSystemResource;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.UrlResource;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.net.MalformedURLException;
+import java.nio.file.*;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
 @Slf4j
 public class MediaServiceImpl implements MediaService {
+
     private final MediaRepository mediaRepository;
 
     @Value("${media.server-path}")
@@ -31,6 +35,10 @@ public class MediaServiceImpl implements MediaService {
 
     @Value("${media.base-uri}")
     private String baseUri;
+
+    @Value("${upload.dir}")
+    private String uploadDir;
+
     @Override
     public MediaResponse upload(MultipartFile file) {
 
@@ -65,5 +73,48 @@ public class MediaServiceImpl implements MediaService {
                 .uri(baseUri + String.format("%s.%s", name, extension))
                 .size(file.getSize())
                 .build();
+    }
+
+    @Override
+    public List<MediaResponse> uploadMultiple(List<MultipartFile> files) {
+        return files.stream().map(this::upload).collect(Collectors.toList());
+    }
+
+//    @Override
+//    public Resource downloadByName(String filename) {
+//        Path path = Paths.get(uploadDir, filename);
+//        if (!Files.exists(path)) {
+//            throw new RuntimeException("File not found: " + filename);
+//        }
+//        return new FileSystemResource(path.toFile());
+//    }
+    @Override
+    public Resource downloadByName(String filename) {
+        try {
+            Path file = Paths.get("/Users/momrotha/Documents/file_upload/").resolve(filename).normalize();
+            Resource resource = new UrlResource(file.toUri());
+            if (resource.exists()) {
+                return resource;
+            } else {
+                throw new RuntimeException("File not found: " + filename);
+            }
+        } catch (MalformedURLException e) {
+            throw new RuntimeException("Error: " + e.getMessage());
+        }
+    }
+
+
+    @Override
+    public boolean deleteByName(String filename) {
+        Path path = Paths.get(uploadDir).resolve(filename).normalize();
+        try {
+            if (Files.exists(path)) {
+                Files.delete(path);
+                return true;
+            }
+            return false;
+        } catch (IOException e) {
+            throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to delete file");
+        }
     }
 }
