@@ -5,6 +5,7 @@ import com.example.datajpa.service.MediaService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.core.io.Resource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -33,9 +34,10 @@ public class MediaController {
 
     //Download file by name
     @GetMapping("/{filename:.+}")
-    public Resource download(@PathVariable String filename) {
+    public ResponseEntity<Resource> download(@PathVariable String filename) {
         return mediaService.downloadByName(filename);
     }
+
 
     //Delete file by name
     @ResponseStatus(HttpStatus.OK)

@@ -54,7 +54,7 @@ public class KeycloakSecurityConfig {
 
                 .requestMatchers("/auth/**").permitAll()
                 // Media endpoints
-//                .requestMatchers("/media/**").permitAll()
+                .requestMatchers("/media/**").permitAll()
                 .requestMatchers(HttpMethod.POST, "/api/v1/medias/**").hasAnyRole("ADMIN", "STAFF")
                 .requestMatchers(HttpMethod.GET, "/api/v1/medias/**").permitAll()
                 .requestMatchers(HttpMethod.DELETE, "/api/v1/medias/**").hasAnyRole("ADMIN", "STAFF")
