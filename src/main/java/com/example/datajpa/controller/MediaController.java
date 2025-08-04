@@ -40,7 +40,7 @@ public class MediaController {
 
 
     //Delete file by name
-    @ResponseStatus(HttpStatus.OK)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     @DeleteMapping("/{filename:.+}")
     public String delete(@PathVariable String filename) {
         boolean deleted = mediaService.deleteByName(filename);
